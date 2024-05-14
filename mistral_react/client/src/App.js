@@ -9,9 +9,6 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 import toast, { Toaster } from 'react-hot-toast';
 
-
-
-
 function App() {
   const [conversation, setConversation] = useState([
     { role: "AI", content: "Ask me anything!" },
@@ -36,7 +33,6 @@ function App() {
   }, []);
 
   const handleSubmit = async (question) => {
-    // console.log(value);
     try {
       if(question.length === 0){
         throw new Error("Question cannot be empty");
