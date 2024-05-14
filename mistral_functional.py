@@ -2,9 +2,11 @@ from dotenv import load_dotenv
 import streamlit as st
 from mistralai.models.chat_completion import ChatMessage
 import os
+# from audio_recorder_streamlit import audio_recorder
 import pyttsx3
 from mistralai.client import MistralClient
 from langchain_core.messages import AIMessage, HumanMessage
+import speech_recognition as sr
 
 load_dotenv(".env")
 api_key = os.environ["MISTRAL_API_KEY"]
@@ -16,6 +18,19 @@ def text_to_speech(text):
     engine = pyttsx3.init();
     engine.say(text);
     engine.runAndWait();
+
+def speech_to_text(audio_file):
+    recognizer = sr.Recognizer()
+
+    with sr.AudioFile(audio_file) as source:
+        audio = recognizer.record(source)
+
+    try:
+        text = recognizer.recognize_google(audio)
+        return text
+    except:
+        print("Sorry, could not recognize the audio")
+        return None
 
 def get_chat_response(question):
     messages = [
@@ -66,6 +81,24 @@ def process():
             if st.session_state.response:
                 text_to_speech(st.session_state.response)
 
+# footer_container = st.container()
+# with footer_container:
+#     audio_bytes = audio_recorder()
+
+# if audio_bytes:
+#     with st.spinner("Transcribing..."):
+#         webm_file_path = "temp_audio.mp3"
+#         if webm_file_path:
+#             with open(webm_file_path, "wb") as f:
+#                 f.write(audio_bytes)
+#         transcript = speech_to_text(webm_file_path)
+#         if transcript:
+#             with st.chat_message("user"):
+#                 st.write(transcript)
+#             with st.chat_message('AI'):
+#                 response = get_chat_response(transcript);
+#                 st.markdown(response);
+#             os.remove(webm_file_path)
 
 if user_input is not None and user_input.strip() != "":
     process()
